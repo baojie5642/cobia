@@ -2,7 +2,9 @@ package lam.cobia.rpc;
 
 import lam.cobia.core.exception.CobiaException;
 import lam.cobia.core.util.NetUtil;
+import lam.cobia.remoting.Channel;
 import lam.cobia.remoting.Client;
+import lam.cobia.remoting.DefaultFuture;
 import lam.cobia.remoting.Request;
 
 /**
@@ -32,9 +34,12 @@ public class DefaultInvoker<T> extends AbstractInvoker<T>{
 		if (client.isClose()) {
 			throw new CobiaException("client(to server " + NetUtil.parseToString(client.getServerAddress()) + ") has been closed.");
 		}
+		Channel channel = client.getChannel();
 		Request request = Request.newRequest();
 		request.setData(invocation);
-		client.getChannel().send(request);
+		DefaultFuture future = new DefaultFuture(request, channel);
+		channel.send(request);
+		Object obj = future.get();
 		return null;
 	}
 	
