@@ -1,7 +1,5 @@
 package lam.cobia.remoting;
 
-import java.util.concurrent.TimeUnit;
-
 /**
 * <p>
 * response future
@@ -14,6 +12,6 @@ public interface ResponseFuture {
 	
 	public Object get();
 	
-	public Object get(TimeUnit timeUnit, long timeout);
+	public Object get(long milliseconds);
 
 }

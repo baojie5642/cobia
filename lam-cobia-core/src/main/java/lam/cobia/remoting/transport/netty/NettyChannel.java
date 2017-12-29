@@ -31,6 +31,10 @@ public class NettyChannel implements Channel{
 		}
 		return ch;
 	}
+	
+	public static void remove(io.netty.channel.Channel channel) {
+		channelMap.remove(channel);
+	}
 
 	@Override
 	public void send(Object msg) {

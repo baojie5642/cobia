@@ -4,7 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import lam.cobia.core.constant.ConfigConstant;
+import lam.cobia.core.constant.Constant;
 import lam.cobia.remoting.Client;
 import lam.cobia.remoting.transport.netty.NettyClient;
 
@@ -17,10 +17,6 @@ import lam.cobia.remoting.transport.netty.NettyClient;
 * @version 1.0
 */
 public class DefaultProtocol implements Protocol{
-	
-	private static class DefaultProtocolHolder {
-		private static DefaultProtocol INSTANCE = new DefaultProtocol(); 
-	}
 
 	private final Object sharedObject;
 
@@ -32,6 +28,10 @@ public class DefaultProtocol implements Protocol{
 		this.sharedObject = new Object();
 		this.invokerMap = new ConcurrentHashMap<Invoker<?>, Object>();
 		this.exporterMap = new ConcurrentHashMap<String, Exporter<?>>();
+	}
+
+	private static class DefaultProtocolHolder {
+		private static DefaultProtocol INSTANCE = new DefaultProtocol(); 
 	}
 	
 	public static DefaultProtocol getInstance() {
@@ -53,7 +53,7 @@ public class DefaultProtocol implements Protocol{
 	}
 	
 	private Client[] getClients(Class<?> clazz) {
-		InetSocketAddress remoteAddress = new InetSocketAddress(ConfigConstant.DEFAULT_SERVER_HOSTNAME, ConfigConstant.DEFAULT_SERVER_PORT);
+		InetSocketAddress remoteAddress = new InetSocketAddress(Constant.DEFAULT_SERVER_HOSTNAME, Constant.DEFAULT_SERVER_PORT);
 		NettyClient client = new NettyClient(remoteAddress);
 		return new Client[]{client};
 	}

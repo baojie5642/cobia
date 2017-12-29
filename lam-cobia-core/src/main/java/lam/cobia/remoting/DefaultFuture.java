@@ -3,6 +3,12 @@ package lam.cobia.remoting;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import lam.cobia.core.constant.Constant;
+import lam.cobia.core.exception.CobiaException;
 
 /**
 * <p>
@@ -18,31 +24,77 @@ public class DefaultFuture implements ResponseFuture{
 	
 	private final Channel channel;
 	
-	private static final ConcurrentMap<Long, DefaultFuture> RESP_FUTURE = new ConcurrentHashMap<Long, DefaultFuture>();
+	private volatile Response response;
+	
+	private Lock lock;
+	
+	private Condition requestDone;
+	
+	private static final ConcurrentMap<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<Long, DefaultFuture>();
 	
 	//private static final ConcurrentMap<Long, Channel> CHANNELS = new ConcurrentHashMap<Long, Channel>();
 	
 	public DefaultFuture(Request request, Channel channel) {
 		this.request = request;
 		this.channel = channel;
-		this.RESP_FUTURE.put(request.getId(), this);
+		this.lock = new ReentrantLock();
+		this.requestDone = lock.newCondition();
+		FUTURES.put(request.getId(), this);
 		//this.CHANNELS.put(request.getId(), this.channel);
 	}
 	
 	Channel getChannel() {
 		return channel;
 	}
-
-	@Override
-	public Object get() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public static void received(Channel channel, Response response) {
+		DefaultFuture future = FUTURES.remove(response.getId());
+		if (future != null) {
+			future.doReceived(response);
+		} else {
+			throw new CobiaException("Can not find the DefaultFuture object for request id:" + response.getId());
+		}
+	}
+	
+	private void doReceived(Response response) {
+		lock.lock();
+		try {
+			this.response = response;
+			requestDone.signalAll();
+		} finally {
+			lock.unlock();
+		}
+	}
+	
+	private boolean isDone() {
+		return this.response != null;
 	}
 
 	@Override
-	public Object get(TimeUnit timeUnit, long timeout) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object get() {
+		return get(Constant.DEFAULT_TIMEOUT);
+	}
+
+	@Override
+	public Object get(long milliseconds) {
+		if (!isDone()) {
+			lock.lock();
+			try {
+				if (!isDone()) {					
+					try {
+						boolean notTimeout = requestDone.await(milliseconds, TimeUnit.MILLISECONDS);
+						if (!notTimeout) {
+							throw new CobiaException("time out(" + milliseconds + "ms) when waiting for response id:" + request.getId());
+						}
+					} catch (InterruptedException e) {
+						throw new CobiaException("Occurs error when waiting for response id:" + request.getId(), e);
+					}
+				}
+			} finally {
+				lock.unlock();
+			}
+		}
+		return response.getResult();
 	}
 
 }

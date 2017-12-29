@@ -5,6 +5,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
+import lam.cobia.remoting.DefaultFuture;
+import lam.cobia.remoting.Response;
 
 /**
 * <p>
@@ -57,7 +59,8 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        super.channelInactive(ctx);
+        //super.channelInactive(ctx);
+    	NettyChannel.remove(ctx.channel());
     }
 
     /**
@@ -68,7 +71,11 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ctx.fireChannelRead(msg);
+        //ctx.fireChannelRead(msg);
+    	lam.cobia.remoting.Channel channel = NettyChannel.getChannel(ctx.channel());
+    	if (msg instanceof Response) {
+    		DefaultFuture.received(channel, (Response)msg);
+    	}
     }
 
     /**
