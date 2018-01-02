@@ -4,13 +4,17 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.google.gson.Gson;
+
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import lam.cobia.core.util.NetUtil;
+import lam.cobia.remoting.ChannelHandler;
+import lam.cobia.remoting.Request;
 
 /**
 * <p>
@@ -23,8 +27,13 @@ import lam.cobia.core.util.NetUtil;
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 	//key:<host:port>
 	private ConcurrentMap<String, NettyChannel> channelMap;
-
-	public NettyServerHandler() {
+	
+	private ChannelHandler handler;
+	
+	private static Gson gson = new Gson();
+	
+	public NettyServerHandler(ChannelHandler handler) {
+		this.handler = handler;
 		channelMap = new ConcurrentHashMap<String, NettyChannel>();
 	}
 	
@@ -92,7 +101,16 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ctx.fireChannelRead(msg);
+        //ctx.fireChannelRead(msg);
+    	io.netty.channel.Channel channel = ctx.channel();
+    	System.out.println(channel + ">>>" + msg);
+    	lam.cobia.remoting.Channel ch = channelMap.get(channel);
+    	ByteBuf byteBuf = (ByteBuf) msg;
+		byte[] bytes = new byte[byteBuf.readableBytes()];
+		byteBuf.readBytes(bytes);
+		String req = new String(bytes, "utf-8");
+		Request request = gson.fromJson(req, Request.class);
+    	handler.received(ch, request);
     }
 
     /**

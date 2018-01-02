@@ -1,6 +1,7 @@
 package lam.cobia.core;
 
 import lam.cobia.config.spring.CobiaReference;
+import lam.cobia.core.service.IMyService;
 
 /**
 * <p>
@@ -13,17 +14,13 @@ import lam.cobia.config.spring.CobiaReference;
 public class CobiaReferenceTest {
 
 	public static void main(String[] args) {
-		Test test = new Test(){
-
-			@Override
-			public String doIt(String[] ss) {
-				System.out.println(ss);
-				return "s of " + ss;
-			}};
+		
 		CobiaReference cr = new CobiaReference();
-		Test t = cr.refer(Test.class);
-		String s = t.doIt(new String[]{"ab", "bb", "cd"});
-		System.out.println(s);
+		IMyService myService = cr.refer(IMyService.class);
+		String result = myService.doIt("cobia", 1);
+		System.out.println(result);
+		boolean r = myService.doSomething(20L, 2);
+		System.out.println(r);
 	}
 	
 	public interface Test{

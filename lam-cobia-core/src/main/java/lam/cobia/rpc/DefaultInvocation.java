@@ -1,4 +1,7 @@
 package lam.cobia.rpc;
+
+import java.util.Arrays;
+
 /**
 * <p>
 * default invocation
@@ -45,4 +48,10 @@ public class DefaultInvocation implements Invocation{
 		return arguments;
 	}
 
+	@Override
+	public String toString() {
+		return "DefaultInvocation [method=" + method + ", paramenterTypes=" + Arrays.toString(paramenterTypes)
+				+ ", arguments=" + Arrays.toString(arguments) + "]";
+	}
+	
 }

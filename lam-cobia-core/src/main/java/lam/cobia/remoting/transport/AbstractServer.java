@@ -1,11 +1,13 @@
 package lam.cobia.remoting.transport;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import lam.cobia.core.exception.CobiaException;
+import lam.cobia.remoting.ChannelHandler;
 import lam.cobia.remoting.Server;
 
 /**
@@ -23,9 +25,12 @@ public abstract class AbstractServer implements Server{
 	private final int port;
 	
 	private static Logger logger = LoggerFactory.getLogger(AbstractClient.class);
+	
+	protected ChannelHandler handler;
 
-	public AbstractServer(final int port) {
+	public AbstractServer(final int port, ChannelHandler handler) {
 		this.port = port;
+		this.handler = Objects.requireNonNull(handler);
 		if (this.port <= 0) {
 			throw new IllegalArgumentException("server port " + this.port + " can be negative.");
 		}
@@ -43,7 +48,7 @@ public abstract class AbstractServer implements Server{
 	}
 	
 	@Override
-	public void close() {
+	public final void close() {
 		//to guarantee the operation is idempotent, it's not a good idea to use "!closed.getAndSet(true)"
 		boolean oldValue = closed.get();
 		if (!oldValue && closed.compareAndSet(oldValue, true)) {

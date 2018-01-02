@@ -1,9 +1,11 @@
 package lam.cobia.rpc.proxy;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import lam.cobia.core.exception.CobiaException;
 import lam.cobia.rpc.DefaultInvocation;
 import lam.cobia.rpc.Invocation;
 import lam.cobia.rpc.Invoker;
@@ -39,6 +41,30 @@ public class JdkProxyFactory extends AbstractProxyFactory{
 			return invoker.invoke(invocation);
 		}
 		
+	}
+
+	@Override
+	public <T> Invoker<T> getInvoker(T ref, Class<T> clazz) {
+		Invoker<T> invoker = new AbstractProxyInvoker<T>(ref, clazz) {
+			@Override
+			protected Object doInvoke(T proxy, String method, Class<?>[] parameterTypes, Object[] arguments) {
+				try {
+					Method m = proxy.getClass().getMethod(method, parameterTypes);
+					return m.invoke(proxy, arguments);
+				} catch (NoSuchMethodException e) {
+					throw new CobiaException(e);
+				} catch (SecurityException e) {
+					throw new CobiaException(e);
+				} catch (IllegalAccessException e) {
+					throw new CobiaException(e);
+				} catch (IllegalArgumentException e) {
+					throw new CobiaException(e);
+				} catch (InvocationTargetException e) {
+					throw new CobiaException(e);
+				}
+			}
+		};
+		return invoker;
 	}
 
 }

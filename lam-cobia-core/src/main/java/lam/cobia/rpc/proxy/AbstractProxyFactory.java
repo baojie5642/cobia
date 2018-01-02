@@ -12,6 +12,14 @@ import lam.cobia.rpc.Invoker;
 */
 public abstract class AbstractProxyFactory implements ProxyFactory{
 	
+	private static class ProxyFactoryHolder {
+		static ProxyFactory proxyFactory = new JdkProxyFactory();
+	}
+	
+	public static ProxyFactory getDefault() {
+		return ProxyFactoryHolder.proxyFactory;
+	}
+	
 	public <T> T getProxy(Invoker<T> invoker) {
 		//...
 		Class<?>[] interfaces = new Class<?>[]{invoker.getInterface()};

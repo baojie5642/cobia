@@ -17,6 +17,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lam.cobia.core.exception.CobiaException;
+import lam.cobia.remoting.ChannelHandler;
 import lam.cobia.remoting.transport.AbstractServer;
 
 /**
@@ -36,8 +37,8 @@ public class NettyServer extends AbstractServer{
 	//key:<host:port>
 	private ConcurrentMap<String, NettyChannel> channelMap;
 	
-	public NettyServer(int port) {
-		super(port);
+	public NettyServer(int port, ChannelHandler handler) { 
+		super(port, handler);
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public class NettyServer extends AbstractServer{
 		bossGroup = new NioEventLoopGroup(1);
 		workerGroup = new NioEventLoopGroup();
 		
-		final NettyServerHandler nettyServerHandler = new NettyServerHandler();
+		final NettyServerHandler nettyServerHandler = new NettyServerHandler(handler);
 		channelMap = nettyServerHandler.getChannels();
 		
 		try {

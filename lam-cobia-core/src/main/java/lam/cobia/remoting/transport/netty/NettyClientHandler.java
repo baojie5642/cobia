@@ -73,6 +73,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         //ctx.fireChannelRead(msg);
     	lam.cobia.remoting.Channel channel = NettyChannel.getChannel(ctx.channel());
+    	System.out.println(channel + ">>>" + msg);
     	if (msg instanceof Response) {
     		DefaultFuture.received(channel, (Response)msg);
     	}

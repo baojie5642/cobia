@@ -12,6 +12,8 @@ import java.io.Closeable;
 */
 public interface Invoker<T> extends Closeable{
 	
+	public String getKey();
+	
 	public Class<T> getInterface();
 	
 	public Result invoke(Invocation invocation);

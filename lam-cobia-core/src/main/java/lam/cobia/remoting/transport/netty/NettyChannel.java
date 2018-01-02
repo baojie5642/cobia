@@ -3,6 +3,8 @@ package lam.cobia.remoting.transport.netty;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.google.gson.Gson;
+
 import lam.cobia.remoting.Channel;
 
 /**
@@ -16,6 +18,8 @@ import lam.cobia.remoting.Channel;
 public class NettyChannel implements Channel{
 	
 	private io.netty.channel.Channel channel;
+	
+	private static Gson gson = new Gson();
 	
 	private static ConcurrentMap<io.netty.channel.Channel, Channel> channelMap = new ConcurrentHashMap<>();
 	
@@ -38,7 +42,11 @@ public class NettyChannel implements Channel{
 
 	@Override
 	public void send(Object msg) {
-		channel.writeAndFlush(msg);
+		System.out.println(channel + ":" + msg);
+		String json = gson.toJson(msg);
+		channel.writeAndFlush(json);
+		channel.flush();
+		//channel.writeAndFlush("abc");
 	}
 
 }

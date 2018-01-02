@@ -35,4 +35,9 @@ public class Response implements Serializable{
 		return result;
 	}
 
+	@Override
+	public String toString() {
+		return "Response [id=" + id + ", result=" + result + "]";
+	}
+
 }

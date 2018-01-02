@@ -6,6 +6,7 @@ import lam.cobia.remoting.Channel;
 import lam.cobia.remoting.Client;
 import lam.cobia.remoting.DefaultFuture;
 import lam.cobia.remoting.Request;
+import lam.cobia.remoting.Response;
 
 /**
 * <p>
@@ -40,6 +41,11 @@ public class DefaultInvoker<T> extends AbstractInvoker<T>{
 		DefaultFuture future = new DefaultFuture(request, channel);
 		channel.send(request);
 		Object obj = future.get();
+		if (obj instanceof Response) {
+			Response response = (Response) obj;
+			DefaultResult result = new DefaultResult().setValue(response.getResult());
+			return result;
+		}
 		return null;
 	}
 	

@@ -1,4 +1,7 @@
 package lam.cobia.rpc;
+
+import java.util.Objects;
+
 /**
 * <p>
 * default result
@@ -21,7 +24,7 @@ public class DefaultResult implements Result{
 	}
 	
 	public DefaultResult setException(Exception exception) {
-		this.exception = exception;
+		this.exception = Objects.requireNonNull(exception, "Exception object can't be null.");
 		this.isException = true;
 		return this;
 	}
@@ -39,6 +42,11 @@ public class DefaultResult implements Result{
 	@Override
 	public boolean hasException() {
 		return isException;
+	}
+
+	@Override
+	public String toString() {
+		return "DefaultResult [value=" + value + ", exception=" + exception + ", isException=" + isException + "]";
 	}
 
 }

@@ -3,7 +3,7 @@ package lam.cobia.config.spring;
 import lam.cobia.rpc.DefaultProtocol;
 import lam.cobia.rpc.Invoker;
 import lam.cobia.rpc.Protocol;
-import lam.cobia.rpc.proxy.JdkProxyFactory;
+import lam.cobia.rpc.proxy.AbstractProxyFactory;
 import lam.cobia.rpc.proxy.ProxyFactory;
 
 /**
@@ -18,7 +18,7 @@ public class CobiaReference {
 	
 	private Protocol protocol = DefaultProtocol.getInstance();
 	
-	private ProxyFactory proxyFactory = new JdkProxyFactory();
+	private ProxyFactory proxyFactory = AbstractProxyFactory.getDefault();
 	
 	public <T> T refer(Class<T> clazz) {
 		Invoker<T> invoker = protocol.refer(clazz);

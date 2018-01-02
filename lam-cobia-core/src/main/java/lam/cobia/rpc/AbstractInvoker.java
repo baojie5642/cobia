@@ -14,6 +14,11 @@ public abstract class AbstractInvoker<T> implements Invoker<T>{
 	public AbstractInvoker(Class<T> classInterface) {
 		this.classInterface = classInterface;
 	}
+	
+	@Override
+	public String getKey() {
+		return classInterface.getName();
+	}
 
 	@Override
 	public Class<T> getInterface() {

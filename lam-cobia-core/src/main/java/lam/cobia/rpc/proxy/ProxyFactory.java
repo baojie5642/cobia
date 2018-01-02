@@ -13,5 +13,7 @@ import lam.cobia.rpc.Invoker;
 public interface ProxyFactory {
 	
 	public <T> T getProxy(Invoker<T> invoker);
+	
+	public <T> Invoker<T> getInvoker(T ref, Class<T> clazz);
 
 }

@@ -40,7 +40,7 @@ public abstract class AbstractClient implements Client{
 	}
 	
 	@Override
-	public void close() {
+	public final void close() {
 		//to guarantee the operation is idempotent
 		boolean oldValue = closed.get();
 		if (!oldValue && closed.compareAndSet(oldValue, true)) {
