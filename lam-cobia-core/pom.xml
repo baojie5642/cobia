@@ -42,6 +42,12 @@
   		<artifactId>log4j</artifactId>
   		<version>1.2.17</version>
 	</dependency>
+	<!-- hessian serialization -->
+    <dependency>
+	    <groupId>com.caucho</groupId>
+	    <artifactId>hessian</artifactId>
+	    <version>3.1.5</version>
+	</dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

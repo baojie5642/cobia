@@ -1,5 +1,6 @@
 package lam.cobia.remoting;
 
+import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -10,8 +11,10 @@ import java.util.concurrent.atomic.AtomicLong;
 * @date 2017年12月22日
 * @version 1.0
 */
-public class Request {
+public class Request implements Serializable{
 	
+	private static final long serialVersionUID = 7473629229906171995L;
+
 	private final long id;
 
 	private Object data;

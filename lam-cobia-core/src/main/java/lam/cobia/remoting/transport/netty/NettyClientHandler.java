@@ -1,5 +1,6 @@
 package lam.cobia.remoting.transport.netty;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
@@ -7,6 +8,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import lam.cobia.remoting.DefaultFuture;
 import lam.cobia.remoting.Response;
+import lam.cobia.serialize.Hessian2Deserializer;
 
 /**
 * <p>
@@ -74,9 +76,14 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
         //ctx.fireChannelRead(msg);
     	lam.cobia.remoting.Channel channel = NettyChannel.getChannel(ctx.channel());
     	System.out.println(channel + ">>>" + msg);
-    	if (msg instanceof Response) {
-    		DefaultFuture.received(channel, (Response)msg);
-    	}
+    	
+    	ByteBuf byteBuf = (ByteBuf) msg;
+		byte[] bytes = new byte[byteBuf.readableBytes()];
+		byteBuf.readBytes(bytes);
+		
+		Response response = Hessian2Deserializer.deserialize(bytes, Response.class);
+    	
+		DefaultFuture.received(channel, response);
     }
 
     /**

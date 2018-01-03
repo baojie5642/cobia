@@ -41,12 +41,16 @@ public class DefaultInvoker<T> extends AbstractInvoker<T>{
 		DefaultFuture future = new DefaultFuture(request, channel);
 		channel.send(request);
 		Object obj = future.get();
+		if (obj == null) {
+			throw new CobiaException("result is null");
+		}
+		DefaultResult result = new DefaultResult();
 		if (obj instanceof Response) {
 			Response response = (Response) obj;
-			DefaultResult result = new DefaultResult().setValue(response.getResult());
-			return result;
+			return result.setValue(response.getResult());
+		} else {
+			return result.setValue(obj);
 		}
-		return null;
 	}
 	
 	@Override

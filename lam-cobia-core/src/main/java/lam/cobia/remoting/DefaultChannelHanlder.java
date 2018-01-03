@@ -29,6 +29,7 @@ public class DefaultChannelHanlder implements ChannelHandler{
 			
 			if (request.getData() instanceof Invocation) {
 				Invocation invocation = (Invocation) request.getData();
+				//invoker应该由Invocation的key来决定。
 				Result result = invoker.invoke(invocation);
 				
 				if (!result.hasException()) {

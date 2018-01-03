@@ -1,5 +1,6 @@
 package lam.cobia.rpc;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -10,8 +11,10 @@ import java.util.Objects;
 * @date 2017年12月22日
 * @version 1.0
 */
-public class DefaultResult implements Result{
+public class DefaultResult implements Result, Serializable{
 	
+	private static final long serialVersionUID = 3397816613697512112L;
+
 	private Object value;
 	
 	private Exception exception;

@@ -9,6 +9,7 @@ import lam.cobia.core.exception.CobiaException;
 import lam.cobia.rpc.DefaultInvocation;
 import lam.cobia.rpc.Invocation;
 import lam.cobia.rpc.Invoker;
+import lam.cobia.rpc.Result;
 
 /**
 * <p>
@@ -38,7 +39,11 @@ public class JdkProxyFactory extends AbstractProxyFactory{
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			Invocation invocation = new DefaultInvocation()
 					.setMethod(method.getName()).setParamenterTypes(method.getParameterTypes()).setArguments(args);
-			return invoker.invoke(invocation);
+			Result result = invoker.invoke(invocation);
+			if (result == null) {
+				throw new CobiaException("result == null");
+			}
+			return result.getValue();
 		}
 		
 	}

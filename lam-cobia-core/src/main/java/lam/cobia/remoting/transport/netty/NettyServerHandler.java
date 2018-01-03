@@ -12,9 +12,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
+import lam.cobia.core.constant.Constant;
 import lam.cobia.core.util.NetUtil;
 import lam.cobia.remoting.ChannelHandler;
 import lam.cobia.remoting.Request;
+import lam.cobia.serialize.Hessian2Deserializer;
 
 /**
 * <p>
@@ -104,12 +106,14 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         //ctx.fireChannelRead(msg);
     	io.netty.channel.Channel channel = ctx.channel();
     	System.out.println(channel + ">>>" + msg);
-    	lam.cobia.remoting.Channel ch = channelMap.get(channel);
+    	String key = NetUtil.parseToString((InetSocketAddress) channel.remoteAddress());
+    	lam.cobia.remoting.Channel ch = channelMap.get(key);
     	ByteBuf byteBuf = (ByteBuf) msg;
 		byte[] bytes = new byte[byteBuf.readableBytes()];
 		byteBuf.readBytes(bytes);
-		String req = new String(bytes, "utf-8");
-		Request request = gson.fromJson(req, Request.class);
+		Request request = Hessian2Deserializer.deserialize(bytes, Request.class);
+		/*String req = new String(bytes, Constant.DEFAULT_CHART_UTF8);
+		Request request = gson.fromJson(req, Request.class);*/
     	handler.received(ch, request);
     }
 

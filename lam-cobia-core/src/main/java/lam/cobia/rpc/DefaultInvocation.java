@@ -1,5 +1,6 @@
 package lam.cobia.rpc;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -10,8 +11,10 @@ import java.util.Arrays;
 * @date 2017年12月19日
 * @version 1.0
 */
-public class DefaultInvocation implements Invocation{
+public class DefaultInvocation implements Invocation, Serializable{
 	
+	private static final long serialVersionUID = 7937071307339783242L;
+
 	private String method;
 	
 	private Class<?>[] paramenterTypes;

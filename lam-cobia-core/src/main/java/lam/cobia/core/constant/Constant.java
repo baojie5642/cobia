@@ -17,6 +17,8 @@ public class Constant {
 	
 	public static final int DEFAULT_SERVER_PORT = 4325;
 	
+	public static final String DEFAULT_CHART_UTF8 = "UTF-8";
+	
 	public static final long DEFAULT_TIMEOUT = 1000L;
 
 }
